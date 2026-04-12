@@ -2,11 +2,14 @@
 
 This directory contains all the documentation and materials for the MCP Memory Server implementation assessment.
 
+> Note: `README.md` at the repository root stays as the standard project README. The files in this folder are interviewer-facing, detailed assessment materials that explain the process, architecture, and implementation choices.
+
 ## Files Overview
 
 ### 📋 Primary Documentation (Read First)
 
 **README-PROCEDURE.md** - Comprehensive thought process and design decisions
+
 - Phase-by-phase breakdown of implementation strategy
 - Technology stack decisions with alternatives considered
 - Data model design rationale
@@ -14,6 +17,7 @@ This directory contains all the documentation and materials for the MCP Memory S
 - Challenges faced and solutions implemented
 
 **COMPLETION_SUMMARY.md** - Implementation summary and deliverables
+
 - What was built and delivered
 - File structure created
 - Features implemented
@@ -21,6 +25,7 @@ This directory contains all the documentation and materials for the MCP Memory S
 - Performance characteristics
 
 **IMPLEMENTATION_GUIDE.md** - Technical deep-dive
+
 - Architecture overview
 - Component explanations
 - Data flow diagrams
@@ -30,17 +35,20 @@ This directory contains all the documentation and materials for the MCP Memory S
 ### 🔧 Technical Documentation
 
 **README.md** - User guide for running the server
+
 - Installation instructions
 - Quick start guide
 - API usage examples
 - Testing instructions
 
 **IMPLEMENTATION_NOTES.md** - Progress tracking and notes
+
 - Development progress
 - Implementation decisions
 - Future improvements
 
 **TESTING_GUIDE.md** - Testing documentation
+
 - How to run tests
 - Test coverage
 - Testing strategies
@@ -48,6 +56,7 @@ This directory contains all the documentation and materials for the MCP Memory S
 ### 🤖 AI Assistant Configuration
 
 **copilot-instructions.md** - GitHub Copilot instructions
+
 - AI coding assistant guidelines
 - Project-specific conventions
 - Key files and patterns to know
@@ -55,11 +64,13 @@ This directory contains all the documentation and materials for the MCP Memory S
 ### 📝 Assignment Materials
 
 **interview-assignment.md** - Original assignment requirements
+
 - What was asked to build
 - Submission requirements
 - Evaluation criteria
 
 **create-agent.md** - Agent creation instructions
+
 - How to set up the Mendix GenAI Showcase App
 - Agent configuration steps
 - MCP server integration guide
@@ -85,6 +96,7 @@ This directory contains all the documentation and materials for the MCP Memory S
 ## What This Assessment Demonstrates
 
 The implementation demonstrates expertise in:
+
 - System design and architecture
 - API design and RESTful patterns
 - Database design and ORM usage
@@ -94,7 +106,7 @@ The implementation demonstrates expertise in:
 
 ## Project Structure
 
-```
+```bash
 mendix-agent/
 ├── assessment-materials/     ← This directory - all docs for interviewer
 ├── mcp-server/              ← Main application code
@@ -104,6 +116,7 @@ mendix-agent/
 ```
 
 The MCP server is production-ready with:
+
 - ✅ SQLite persistence (not just in-memory)
 - ✅ Vector embeddings for semantic search
 - ✅ Auto-summarization to optimize storage
