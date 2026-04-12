@@ -230,7 +230,7 @@ pip install -r requirements.txt
 
 ```bash
 # From repo root
-cd mcp-server
+cd mcp_server
 python main.py
 
 # Or with uvicorn
@@ -386,7 +386,7 @@ pytest tests/
 pytest tests/test_api.py::test_store_memory
 
 # With coverage
-pytest --cov=mcp-server tests/
+pytest --cov=mcp_server tests/
 ```
 
 ---

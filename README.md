@@ -6,8 +6,8 @@ This project implements a minimal MCP (Mendix Connector Protocol) memory server 
 
 The system consists of a single-process Python FastAPI microservice with an in-memory memory store (intentionally minimal for the assignment). Key components:
 
-- **MCP Server** (`mcp-server/main.py`): FastAPI application exposing MCP-compatible endpoints
-- **Memory Store** (`mcp-server/memory.py`): Simple in-memory storage with naive substring search
+- **MCP Server** (`mcp_server/main.py`): FastAPI application exposing MCP-compatible endpoints
+- **Memory Store** (`mcp_server/memory.py`): Simple in-memory storage with naive substring search
 - **Integration**: Connects to Mendix GenAI Showcase App via HTTP APIs
 
 ## Quick Start
@@ -28,7 +28,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install fastapi uvicorn
 
 # Run the server
-uvicorn mcp-server.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn mcp_server.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Test Endpoints
@@ -94,7 +94,7 @@ For production use, consider adding:
 
 ## Files
 
-- `mcp-server/main.py` - FastAPI application with MCP endpoints
-- `mcp-server/memory.py` - Memory storage and search logic
+- `mcp_server/main.py` - FastAPI application with MCP endpoints
+- `mcp_server/memory.py` - Memory storage and search logic
 - `assignment Principal Engineer AI platform/` - Assignment documentation and integration guides
 - `.github/copilot-instructions.md` - AI assistant guidance for this codebase

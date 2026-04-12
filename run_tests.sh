@@ -6,7 +6,7 @@ echo "🚀 MCP Memory Server Test Suite"
 echo "================================="
 
 # Check if we're in the right directory
-if [ ! -f "mcp-server/main.py" ]; then
+if [ ! -f "mcp_server/main.py" ]; then
     echo "❌ Error: Run this script from the project root directory"
     echo "   cd /path/to/mendix-agent"
     exit 1

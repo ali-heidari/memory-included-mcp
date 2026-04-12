@@ -3,6 +3,11 @@
 import pytest
 import tempfile
 import os
+import sys
+
+# Add the parent directory to the path so we can import mcp_server
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from mcp_server.database import Database, Conversation, Base

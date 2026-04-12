@@ -9,10 +9,10 @@ Big picture
 - Single-process FastAPI service that stores and retrieves short memory notes per user. Streaming endpoint (`/stream`) exposes Server-Sent Events to emulate agent/tool streaming.
 
 Key files (start here)
-- [mcp-server/main.py](mcp-server/main.py): API handlers and Pydantic request models (`StoreRequest`, `SearchRequest`).
-- [mcp-server/memory.py](mcp-server/memory.py): `MemoryStore.add(user_id, content)` and `MemoryStore.search(user_id, query)` — preservable signatures.
-- [mcp-server/embeddings.py](mcp-server/embeddings.py), [mcp-server/summarization.py](mcp-server/summarization.py), [mcp-server/models.py](mcp-server/models.py): helper utilities used by the service.
-- [assignment Principal Engineer AI platform/create-agent.md](assignment Principal Engineer AI platform/create-agent.md): integration notes and example agent configuration.
+- [../mcp_server/main.py](../mcp_server/main.py): API handlers and Pydantic request models (`StoreRequest`, `SearchRequest`).
+- [../mcp_server/memory.py](../mcp_server/memory.py): `MemoryStore.add(user_id, content)` and `MemoryStore.search(user_id, query)` — preservable signatures.
+- [../mcp_server/embeddings.py](../mcp_server/embeddings.py), [../mcp_server/summarization.py](../mcp_server/summarization.py), [../mcp_server/models.py](../mcp_server/models.py): helper utilities used by the service.
+- [../assignment Principal Engineer AI platform/assignment Principal Engineer AI platform/create-agent.md](../assignment Principal Engineer AI platform/assignment Principal Engineer AI platform/create-agent.md): integration notes and example agent configuration.
 
 Run & test (quick)
 - Create venv and install deps: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt` (or `pip install fastapi uvicorn` if `requirements.txt` is absent).
@@ -31,8 +31,8 @@ Integration notes & safe changes
 - If you change request/response shapes, update `assignment Principal Engineer AI platform/create-agent.md` and test examples.
 
 Where to look next
-- Start with [mcp-server/memory.py](mcp-server/memory.py) and [mcp-server/main.py](mcp-server/main.py), then run the server and exercise the three endpoints.
-- For agent integration details see [assignment Principal Engineer AI platform/create-agent.md](assignment Principal Engineer AI platform/create-agent.md).
+- Start with [../mcp_server/memory.py](../mcp_server/memory.py) and [../mcp_server/main.py](../mcp_server/main.py), then run the server and exercise the three endpoints.
+- For agent integration details see [../assignment Principal Engineer AI platform/assignment Principal Engineer AI platform/create-agent.md](../assignment Principal Engineer AI platform/assignment Principal Engineer AI platform/create-agent.md).
 
 If you want this expanded (CI, persistent store examples, improved tests), tell me which area to prioritize.
 # store memory

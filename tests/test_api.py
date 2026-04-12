@@ -4,6 +4,9 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 import json
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from mcp_server.main import app
 
 
