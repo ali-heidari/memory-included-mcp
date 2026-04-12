@@ -1,38 +1,125 @@
 <!-- .github/copilot-instructions.md -->
-<!-- .github/copilot-instructions.md -->
-# Repo-specific Copilot Instructions (concise)
+# Copilot Instructions - Quick Reference & Navigation
 
-Purpose
-- Minimal MCP (Mendix Connector Protocol) memory server used by the GenAI Showcase App. Small FastAPI microservice demonstrating memory tools and SSE streaming for an agent integration.
+**Purpose**: MCP (Mendix Connector Protocol) memory server for GenAI agents  
+**Type**: FastAPI microservice with SQLite persistence and semantic search
 
-Big picture
-- Single-process FastAPI service that stores and retrieves short memory notes per user. Streaming endpoint (`/stream`) exposes Server-Sent Events to emulate agent/tool streaming.
+## ⚡ Quick Start (5 mins)
 
-Key files (start here)
-- [mcp-server/main.py](mcp-server/main.py): API handlers and Pydantic request models (`StoreRequest`, `SearchRequest`).
-- [mcp-server/memory.py](mcp-server/memory.py): `MemoryStore.add(user_id, content)` and `MemoryStore.search(user_id, query)` — preservable signatures.
-- [mcp-server/embeddings.py](mcp-server/embeddings.py), [mcp-server/summarization.py](mcp-server/summarization.py), [mcp-server/models.py](mcp-server/models.py): helper utilities used by the service.
-- [assignment Principal Engineer AI platform/create-agent.md](assignment Principal Engineer AI platform/create-agent.md): integration notes and example agent configuration.
+```bash
+# Install & run
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python3 -m mcp_server.main
 
-Run & test (quick)
-- Create venv and install deps: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt` (or `pip install fastapi uvicorn` if `requirements.txt` is absent).
-- Start server: `uvicorn mcp-server.main:app --reload --host 0.0.0.0 --port 8000`.
-- Smoke calls (examples): `curl http://localhost:8000/`, `curl -X POST -H 'Content-Type: application/json' -d '{"user_id":"u1","content":"note"}' http://localhost:8000/store_memory`, `curl -N http://localhost:8000/stream`.
-- Tests: run `./run_tests.sh` or `pytest -q`. Check `test_mcp_server.py` for expectations.
+# Test endpoint
+curl http://localhost:8000/
+curl -X POST -H 'Content-Type: application/json' \
+  -d '{"user_id":"test","content":"Hello world"}' \
+  http://localhost:8000/store_memory
+```
 
-Conventions & patterns
-- Use Pydantic models for API payloads — keep shapes stable (see `StoreRequest`, `SearchRequest`).
-- `MemoryStore.search` is a case-insensitive substring match and the app currently returns up to 3 hits (`results[:3]`). Tests and integrations rely on that behaviour.
-- SSE streaming is implemented in `/stream` — keep event framing intact if modifying streaming logic.
-- Code favors simplicity (no auth, no pagination, no ranking). When adding features, update examples and tests.
+## 📚 Modular Documentation Index
 
-Integration notes & safe changes
-- The Mendix agent calls `/store_memory` and `/search_memory`. If you add persistence, preserve `MemoryStore.add` and `MemoryStore.search` signatures for backward compatibility.
-- If you change request/response shapes, update `assignment Principal Engineer AI platform/create-agent.md` and test examples.
+Use these files for specific tasks:
 
-Where to look next
-- Start with [mcp-server/memory.py](mcp-server/memory.py) and [mcp-server/main.py](mcp-server/main.py), then run the server and exercise the three endpoints.
-- For agent integration details see [assignment Principal Engineer AI platform/create-agent.md](assignment Principal Engineer AI platform/create-agent.md).
+### **System Understanding**
+- [architecture.md](ai-context/architecture.md) — System design, layers, data flow, schema
 
-If you want this expanded (CI, persistent store examples, improved tests), tell me which area to prioritize.
-# store memory
+### **API Development**
+- [api-endpoints.md](ai-context/api-endpoints.md) — All endpoints, request/response formats, status codes
+
+### **Code Standards**
+- [coding-standards.md](ai-context/coding-standards.md) — Patterns, validation, error handling, testing
+
+### **Feature Deep-Dives**
+- [features/embeddings.md](ai-context/features/embeddings.md) — Vector embeddings, semantic search, similarity ranking
+- [features/summarization.md](ai-context/features/summarization.md) — Text summarization, storage reduction, fallback strategy
+
+## 🎯 Quick Navigation by Task
+
+| Task | Read These Files (in order) |
+|------|---------------------------|
+| **Add new API endpoint** | architecture.md → api-endpoints.md → coding-standards.md |
+| **Fix embedding bug** | features/embeddings.md → coding-standards.md |
+| **Modify summarization** | features/summarization.md → architecture.md |
+| **Database changes** | architecture.md → coding-standards.md |
+| **New feature** | architecture.md → relevant feature file → api-endpoints.md |
+| **Code review** | coding-standards.md → relevant feature file |
+| **Deployment issue** | architecture.md + config context in main.py |
+
+## 🗂️ Key Files
+
+- `mcp_server/main.py` — FastAPI app with 7 endpoints
+- `mcp_server/database.py` — SQLAlchemy ORM + CRUD
+- `mcp_server/models.py` — Pydantic request/response models
+- `mcp_server/embeddings.py` — Vector embeddings & similarity search
+- `mcp_server/summarization.py` — Text summarization
+- `mcp_server/config.py` — Configuration & env variables
+
+## 🏗️ Architecture at a Glance
+
+```
+Request → Validation (Pydantic)
+        → Summarization (text reduction)
+        → Embedding (vector generation)
+        → Database (SQLite store)
+        → Response (JSON metadata)
+```
+
+## 📋 Key Conventions
+
+- Use **Pydantic models** for all API inputs/outputs
+- Store **embeddings as BLOB** in database
+- Summarize **before** embedding
+- Always **include user_id** for data isolation
+- **Graceful degradation** on embedding failure
+
+## ⚙️ Configuration
+
+Set via environment variables or `.github/ai-context/` files:
+
+```python
+DB_PATH = "memory.db"                              # Database file
+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"          # Sentence transformer
+VECTOR_SIMILARITY_THRESHOLD = 0.7                  # Search threshold
+SUMMARIZATION_MAX_LENGTH = 150                     # Summary max chars
+API_PORT = 8000                                    # Server port
+```
+
+## 🧪 Testing
+
+```bash
+./run_tests.sh              # All tests
+pytest tests/test_api.py    # API tests only
+pytest -v                   # Verbose output
+```
+
+## 🚀 Common Tasks
+
+**Add API endpoint?** → See [api-endpoints.md](ai-context/api-endpoints.md) for pattern + [coding-standards.md](ai-context/coding-standards.md) for Pydantic model structure
+
+**Improve search?** → See [features/embeddings.md](ai-context/features/embeddings.md) for similarity logic + threshold tuning
+
+**Database schema change?** → See [architecture.md](ai-context/architecture.md) for schema + [coding-standards.md](ai-context/coding-standards.md) for SQLAlchemy patterns
+
+**Summarization issue?** → See [features/summarization.md](ai-context/features/summarization.md) for fallback chain
+
+## 💡 Pro Tips
+
+1. **First call slow?** Embedding model loads on first /store_memory → cached after
+2. **No search results?** Check VECTOR_SIMILARITY_THRESHOLD in config
+3. **Database locked?** SQLite limitation → use file-based mutex or upgrade to PostgreSQL
+4. **Memory usage?** Models (~100MB) + embeddings (1.5KB each) → plan storage
+
+## 📞 When Stuck
+
+1. Check relevant documentation file above
+2. Look at existing endpoint implementation in `main.py`
+3. Review tests in `tests/` for working examples
+4. Check error logs with `logger.error()` context
+
+---
+
+**Last Updated**: April 2026  
+**For detailed thought process & human-readable guide**: See `assessment-materials/README.md`
