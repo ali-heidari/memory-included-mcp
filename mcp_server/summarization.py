@@ -1,7 +1,7 @@
 """Text summarization for conversation memory"""
 
 import logging
-from config import SUMMARY_RULES, SUMMARIZATION_MAX_LENGTH, SUMMARIZATION_MIN_LENGTH
+from .config import SUMMARY_RULES, SUMMARIZATION_MAX_LENGTH, SUMMARIZATION_MIN_LENGTH
 
 logger = logging.getLogger(__name__)
 

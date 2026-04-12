@@ -10,11 +10,11 @@ import logging
 import uuid
 
 # Import our modules
-from models import StoreRequest, StoreResponse, SearchRequest, SearchResponse, MemoryResult, ListMemoriesResponse, MemoryDetail
-from database import db
-from summarization import summarize
-from embeddings import generate_embedding, get_embedding_model, search_similar_embeddings, deserialize_embedding
-from config import API_HOST, API_PORT, SEARCH_RESULTS_LIMIT, VECTOR_SIMILARITY_THRESHOLD
+from .models import StoreRequest, StoreResponse, SearchRequest, SearchResponse, MemoryResult, ListMemoriesResponse, MemoryDetail
+from .database import db
+from .summarization import summarize
+from .embeddings import generate_embedding, get_embedding_model, search_similar_embeddings, deserialize_embedding
+from .config import API_HOST, API_PORT, SEARCH_RESULTS_LIMIT, VECTOR_SIMILARITY_THRESHOLD
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

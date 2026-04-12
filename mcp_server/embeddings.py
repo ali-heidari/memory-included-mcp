@@ -17,7 +17,7 @@ def get_embedding_model():
     if _embedding_model is None:
         try:
             from sentence_transformers import SentenceTransformer
-            from config import EMBEDDING_MODEL_NAME
+            from .config import EMBEDDING_MODEL_NAME
 
             logger.info(f"Loading embedding model: {EMBEDDING_MODEL_NAME}")
             _embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)

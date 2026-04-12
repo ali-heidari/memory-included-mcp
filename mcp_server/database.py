@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from datetime import datetime
 import uuid
-from config import DB_URL
+from .config import DB_URL
 
 Base = declarative_base()
 
