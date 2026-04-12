@@ -105,7 +105,32 @@ pytest -v                   # Verbose output
 
 **Summarization issue?** → See [features/summarization.md](ai-context/features/summarization.md) for fallback chain
 
-## 💡 Pro Tips
+## � After Adding a Feature
+
+**Always update docs to keep them in sync with code:**
+
+1. ✅ **api-endpoints.md** — Add endpoint with request/response examples + status codes
+2. ✅ **architecture.md** — Update if data flow or schema changed
+3. ✅ **coding-standards.md** — Add pattern example if you introduced a new pattern
+4. ✅ **features/[feature].md** — Create or update feature-specific deep-dive
+5. ✅ **models.py docstring** — Document new Pydantic models
+6. ✅ **Run tests** — `pytest tests/` to validate changes
+7. ✅ **Commit message** — Follow format: `[feature|fix|refactor]: description + affected docs`
+
+**Example workflow (add new endpoint)**:
+```
+1. Add endpoint to main.py
+2. Add Pydantic model to models.py
+3. Update api-endpoints.md with new endpoint section
+4. Update architecture.md if data flow changed
+5. Add tests in tests/test_api.py
+6. Run: pytest tests/
+7. Commit: [feature]: Add /new_endpoint - updated api-endpoints.md, models.py
+```
+
+**Why?** Next agent task receives fresh context = fewer debugging loops
+
+## �💡 Pro Tips
 
 1. **First call slow?** Embedding model loads on first /store_memory → cached after
 2. **No search results?** Check VECTOR_SIMILARITY_THRESHOLD in config
