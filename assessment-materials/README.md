@@ -1,97 +1,197 @@
 # Mendix Agent Memory MCP Server
 
-This project implements a minimal MCP (Mendix Connector Protocol) memory server that provides persistent memory capabilities for AI agents in the Mendix GenAI Showcase App. The server allows agents to store and retrieve conversation notes across sessions, enabling contextual awareness in user interactions.
+This repository contains the Mendix MCP Memory Server implementation for the AI Platform interview assignment.
 
-## Architecture
+The interviewer specifically asked to see the thought process, architecture, and file responsibilities. This README is written with that goal in mind.
 
-The system consists of a single-process Python FastAPI microservice with SQLite persistence and semantic memory search support. Key components:
+## What this project is trying to solve
 
-- **MCP Server** (`mcp_server/main.py`): FastAPI application exposing MCP-compatible endpoints
-- **Database** (`mcp_server/database.py`): SQLite persistence for stored memories and metadata
-- **Embedding Search** (`mcp_server/embeddings.py`): Vector embeddings for semantic memory retrieval
-- **Integration**: Connects to Mendix GenAI Showcase App via HTTP APIs
+The core problem is: AI agents need memory.
 
-## Quick Start
+A Mendix-compatible MCP server should be able to:
 
-### Prerequisites
+- store conversation memory reliably
+- summarize and persist important content
+- retrieve relevant memories later
+- expose simple, testable HTTP APIs
+- support a streaming integration path
 
-- Python 3.8+
-- Virtual environment (recommended)
+## My thought process
 
-### Installation & Run
+### 1. Understand the assignment
+
+The assignment asked for an MCP memory server, not a research prototype. That means prioritizing:
+
+- clarity over cleverness
+- predictable behavior over experimental features
+- documented design over hidden implementation details
+
+### 2. Choose tools that make the design visible
+
+I selected:
+
+- Python + FastAPI for readable REST API and automatic validation
+- SQLite for storage so persistence is concrete and reproducible
+- Pydantic models to explicitly define API contracts
+
+These choices make the project easy to inspect and understand.
+
+### 3. Structure based on single responsibility
+
+Each module focuses on one thing:
+
+- main application and routing
+- database schema and persistence
+- embeddings and semantic search
+- summarization
+- configuration
+
+That keeps the implementation maintainable and reviewable.
+
+### 4. Validate with real API tests
+
+I verified the service with manual curl commands for every endpoint.
+
+The results are recorded in this document so the interviewer can see both the design and the actual behavior.
+
+## Project structure
+
+### `mcp_server/main.py`
+
+This is the entry point for the service.
+
+- defines the FastAPI app and all endpoints
+- orchestrates summarization, embedding creation, and database writes
+- includes health checks, search, list, delete, streaming, and legacy compatibility
+
+### `mcp_server/database.py`
+
+This file defines the data model and persistence layer.
+
+- SQLAlchemy ORM model for conversations
+- SQLite engine and session factory
+- CRUD methods for storing, retrieving, searching, and deleting memories
+
+### `mcp_server/models.py`
+
+This file defines Pydantic models used by the API.
+
+- request shapes: `StoreRequest`, `SearchRequest`
+- response shapes: `StoreResponse`, `SearchResponse`, `ListMemoriesResponse`
+- typed results: `MemoryResult`, `MemoryDetail`
+
+Using Pydantic means the API is self-validating and easy to document.
+
+### `mcp_server/embeddings.py`
+
+This file contains semantic search utilities.
+
+- loads the sentence-transformers model lazily
+- converts text into embeddings
+- performs cosine similarity ranking
+
+This component is a clean abstraction so the search logic is separated from the API and storage logic.
+
+### `mcp_server/summarization.py`
+
+This file contains the summarization logic that runs before storage.
+
+- reduces content size
+- preserves meaning for search and display
+- applies configured min/max summary lengths
+
+Summaries help keep stored memory concise and searchable.
+
+### `mcp_server/config.py`
+
+Centralizes configuration values and environment overrides.
+
+- database path
+- embedding model selection
+- API host/port
+- summarization limits
+
+This keeps deployment settings separate from code logic.
+
+## How to run the service
+
+From the repository root:
 
 ```bash
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 -m mcp_server.main
+```
 
-# Install dependencies
-pip install fastapi uvicorn
+Or with Uvicorn for development:
 
-# Run the server
+```bash
 uvicorn mcp_server.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Test Endpoints
+## API endpoints and usage
 
-```bash
-# Health check
-curl http://localhost:8000/
+### Health
 
-# Store memory
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"user_id":"user123","content":"User prefers dark mode interface"}' \
-  http://localhost:8000/store_memory
+- `GET /`
+- `GET /health`
 
-# Search memory
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"user_id":"user123","query":"dark"}' \
-  http://localhost:8000/search_memory
+### Store memory
 
-# Test streaming (SSE)
-curl -N http://localhost:8000/stream
-```
-
-## API Endpoints
-
-- `GET /` - Health check
-- `POST /store_memory` - Store conversation notes
+- `POST /store_memory`
   - Body: `{"user_id": "string", "content": "string"}`
-- `POST /search_memory` - Retrieve relevant memories
-  - Body: `{"user_id": "string", "query": "string"}`
-  - Returns: `{"results": ["memory1", "memory2", ...]}`
-- `GET /stream` - Server-Sent Events streaming demo
 
-## Integration with Mendix
+### Search memory
 
-This MCP server is designed to integrate with the Mendix GenAI Showcase App:
+- `POST /search_memory`
+  - Body: `{"user_id": "string", "query": "string", "limit": 5}`
 
-1. Configure the MCP server endpoint in the Mendix app
-2. Create an agent using the Agent Builder
-3. Add this MCP server as a tool to the agent
-4. The agent can now store/retrieve memories during conversations
+### List memories
 
-## Assignment Context
+- `GET /memories/{user_id}`
 
-This implementation fulfills the Principal Engineer AI Platform interview assignment requirements:
+### Delete memory
 
-- MCP server with HTTP streaming support
-- Memory persistence across conversations
-- Integration with Mendix GenAI Showcase App
-- Export via `git bundle create assignment.bundle --all`
+- `DELETE /memories/{memory_id}`
 
-## Development
+### Streaming
 
-- **Memory Logic**: Uses SQLite persistence with semantic similarity search from embeddings
-- **Storage**: SQLite-based storage for durable memory records and metadata
-- **Streaming**: SSE implementation for demonstration purposes
+- `GET /stream`
 
-For production use, consider adding:
+### Legacy compatibility
 
-- Authentication and rate limiting
-- Pagination and query filtering
-- Monitoring and observability
-- Comprehensive testing
+- `POST /store_memory_legacy`
+
+## Why these endpoints?
+
+I kept the API surface small to make the design easy to evaluate:
+
+- health endpoints prove the service is running
+- store/search/list/delete cover the main memory lifecycle
+- streaming shows that the service can emit chunked responses
+- legacy route demonstrates compatibility with older clients
+
+## What to read next
+
+This README is the high-level guide. For deeper thought process and implementation details, these files are the best next step:
+
+- [README-PROCEDURE.md](README-PROCEDURE.md) — step-by-step design and decision log
+- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) — technical deep dive into code and architecture
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) — validation strategy and test commands
+- [COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md) — summary of delivery and features
+
+## Assessment Materials Index
+
+- [ASSESSMENT-OVERVIEW.md](ASSESSMENT-OVERVIEW.md) — overview of this folder and how to use it
+- [COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md) — delivery summary and feature list
+- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) — architecture and implementation details
+- [README-PROCEDURE.md](README-PROCEDURE.md) — detailed thought process
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) — testing instructions and evidence
+- [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md) — progress notes and incremental decisions
+- [copilot-instructions.md](copilot-instructions.md) — repo-specific assistant guidance
+- [create-agent.md](create-agent.md) — Mendix agent integration reference
+- [interview-assignment.md](interview-assignment.md) — original assignment prompt
 
 ## Manual API Test Results
 
@@ -148,20 +248,6 @@ For production use, consider adding:
   - `curl -X DELETE http://localhost:8000/memories/{memory_id}`
 
 - Note: in the provided test the placeholder `memory_id_here` returned a 404 because it was not replaced with a real memory ID. Use one of the stored IDs above to delete a real memory.
-
-## Assessment Materials Index
-
-This folder contains useful interviewer-facing documentation covering implementation, testing, and assignment context.
-
-- [ASSESSMENT-OVERVIEW.md](ASSESSMENT-OVERVIEW.md) — directory overview and guidance on how to use the assessment materials.
-- [COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md) — concise delivery summary showing what was built, features implemented, and completed scope.
-- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) — detailed technical deep dive into architecture, components, and design decisions.
-- [README-PROCEDURE.md](README-PROCEDURE.md) — step-by-step implementation process, architecture rationale, and trade-offs.
-- [TESTING_GUIDE.md](TESTING_GUIDE.md) — testing strategy, automated/manual test commands, and validation approach.
-- [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md) — development progress notes and decision tracking.
-- [copilot-instructions.md](copilot-instructions.md) — repo-specific AI assistant guidance for this codebase.
-- [create-agent.md](create-agent.md) — Mendix agent integration reference and example configuration.
-- [interview-assignment.md](interview-assignment.md) — original interview prompt and assignment requirements for context.
 
 ## Files
 
