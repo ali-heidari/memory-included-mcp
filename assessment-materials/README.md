@@ -149,6 +149,20 @@ For production use, consider adding:
 
 - Note: in the provided test the placeholder `memory_id_here` returned a 404 because it was not replaced with a real memory ID. Use one of the stored IDs above to delete a real memory.
 
+## Assessment Materials Index
+
+This folder contains useful interviewer-facing documentation covering implementation, testing, and assignment context.
+
+- [ASSESSMENT-OVERVIEW.md](ASSESSMENT-OVERVIEW.md) — directory overview and guidance on how to use the assessment materials.
+- [COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md) — concise delivery summary showing what was built, features implemented, and completed scope.
+- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) — detailed technical deep dive into architecture, components, and design decisions.
+- [README-PROCEDURE.md](README-PROCEDURE.md) — step-by-step implementation process, architecture rationale, and trade-offs.
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) — testing strategy, automated/manual test commands, and validation approach.
+- [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md) — development progress notes and decision tracking.
+- [copilot-instructions.md](copilot-instructions.md) — repo-specific AI assistant guidance for this codebase.
+- [create-agent.md](create-agent.md) — Mendix agent integration reference and example configuration.
+- [interview-assignment.md](interview-assignment.md) — original interview prompt and assignment requirements for context.
+
 ## Files
 
 - `mcp_server/main.py` - FastAPI application with MCP endpoints
